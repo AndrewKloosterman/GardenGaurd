@@ -1,96 +1,83 @@
 # GardenGuard
 
-GardenGuard is a Flutter app that predicts plant leaf diseases from images using an ONNX model.
+GardenGuard is a plant disease detection project with a Colab-based training notebook and a Flutter app for inference.
 
-This repository contains three parts:
-- Model training pipeline in [training_files/train.py](training_files/train.py)
-- Flutter app in [garden_gaurd_app](garden_gaurd_app)
-- Field Images for Real-World Testing
+## Code Structure
 
-## Prerequisites
+- [training_files/GardenGaurd_Training.ipynb](training_files/GardenGaurd_Training.ipynb) contains the training workflow, including dataset download, preprocessing, model training, and model packaging.
+- [garden_gaurd_app](garden_gaurd_app) contains the Flutter application that loads the ONNX model and performs predictions.
+- [garden_gaurd_app/assets/models/plant_model.onnx](garden_gaurd_app/assets/models/plant_model.onnx) is the model bundled with the app.
+- [garden_gaurd_app/pubspec.yaml](garden_gaurd_app/pubspec.yaml) declares the Flutter dependencies and registers the model asset.
 
-- Python 3.10+ (for training)
-- Flutter SDK (stable channel)
-- A device target for Flutter (Windows desktop, Android emulator, or physical Android device)
-- Optional: Kaggle API credentials if you want automatic dataset download
 
-## Stage 1: Training (Python)
+## Dependencies
 
-Use this stage if you want to retrain the classifier from PlantVillage data.
+### Colab Training Notebook
 
-1. Open a terminal in the repo root.
-2. Install Python dependencies:
+The notebook expects these Python packages and services:
 
-```bash
-pip install -r training_files/requirements.txt
-```
+- `kaggle`
+- `torch`
+- `torchvision`
+- `tqdm`
+- `google.colab`
+- Kaggle API credentials for dataset access
 
-3. Configure Kaggle credentials (only needed when downloading dataset automatically).
+### Flutter App
 
-Set environment variables
+The Flutter app uses the following packages from [garden_gaurd_app/pubspec.yaml](garden_gaurd_app/pubspec.yaml):
 
-```bash
-export KAGGLE_USERNAME="your_username"
-export KAGGLE_KEY="your_api_key"
-```
+- `flutter`
+- `cupertino_icons`
+- `file_picker`
+- `image_picker`
+- `onnxruntime`
 
-PowerShell equivalent:
+## Run In Google Colab
 
-```powershell
-$env:KAGGLE_USERNAME="your_username"
-$env:KAGGLE_KEY="your_api_key"
-```
+Use Google Colab to run the training notebook instead of a local Python environment.
 
-4. Run training:
+1. Open [training_files/GardenGaurd_Training.ipynb](training_files/GardenGaurd_Training.ipynb) in Google Colab.
+2. If needed, upload the notebook to Google Drive first, then open it from Colab.
+3. In Colab, choose `Runtime` > `Change runtime type`.
+4. Set `Hardware accelerator` to `GPU` and select `T4 GPU` if it is available.
+5. Enter your Kaggle username and key in the first notebook cell.
+6. Run the notebook cells from top to bottom.
 
-```bash
-python training_files/train.py
-```
+### What the notebook does automatically
 
-If the dataset is already present, skip download:
+- Installs the Kaggle CLI inside Colab.
+- Downloads the PlantVillage dataset from Kaggle.
+- Unzips the dataset into the working directory.
+- Trains a MobileNetV2-based classifier.
+- Packages the trained model into `model_package.zip`.
+- Mounts Google Drive so outputs can be saved from the Colab session.
 
-```bash
-python training_files/train.py --skip-download
-```
+### Data and model access
 
-### Training outputs
+- The PlantVillage dataset is downloaded automatically by the notebook from Kaggle.
+- The app model is already bundled in the repository at [garden_gaurd_app/assets/models/plant_model.onnx](garden_gaurd_app/assets/models/plant_model.onnx), so no extra model download is needed to run the app.
+- If you retrain in Colab, copy the new ONNX model into [garden_gaurd_app/assets/models/plant_model.onnx](garden_gaurd_app/assets/models/plant_model.onnx) before running the Flutter app.
 
-The script writes:
-- model_full.pth
-- model_package.zip
+## Run The Flutter App
 
-Note: the Flutter app currently loads an ONNX file at [garden_gaurd/assets/models/plant_model.onnx](garden_gaurd/assets/models/plant_model.onnx). Retraining in PyTorch does not automatically replace that ONNX model.
+If you want to test the mobile or desktop app after training, use the Flutter project in [garden_gaurd_app](garden_gaurd_app).
 
-## Stage 2: Running Flutter
+1. Open a terminal in [garden_gaurd_app](garden_gaurd_app).
+2. Run `flutter pub get`.
+3. Check available devices with `flutter devices`.
+4. Launch the app with `flutter run`.
 
-This stage runs the app with the bundled ONNX model.
+## Provenance
 
-1. Move into the app directory:
+No prior code was used for this project.
 
-```bash
-cd garden_gaurd
-```
+- The repository source is original to this project.
+- No external repositories were copied or adapted into the codebase.
+- Third-party packages are used only as dependencies, not as copied source code.
 
-2. Install Flutter dependencies:
+## Troubleshooting
 
-```bash
-flutter pub get
-```
-
-3. Confirm available devices:
-
-```bash
-flutter devices
-```
-
-4. Run the app:
-
-```bash
-flutter run
-```
-
-## Quick Troubleshooting
-
-- If training fails with Kaggle authentication errors, re-check Kaggle credentials.
-- If Flutter cannot find the model, verify [garden_gaurd/assets/models/plant_model.onnx](garden_gaurd/assets/models/plant_model.onnx) exists and that [garden_gaurd/pubspec.yaml](garden_gaurd/pubspec.yaml) includes it under assets.
-- If image picking fails on Android, ensure device permissions are granted.
+- If Kaggle download fails in Colab, verify the Kaggle username and key values entered in the notebook.
+- If Colab runs out of memory, restart the runtime and try again with the T4 GPU runtime selected.
+- If the Flutter app cannot find the model, confirm [garden_gaurd_app/assets/models/plant_model.onnx](garden_gaurd_app/assets/models/plant_model.onnx) exists and is listed in [garden_gaurd_app/pubspec.yaml](garden_gaurd_app/pubspec.yaml).
