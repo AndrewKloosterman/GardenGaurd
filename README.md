@@ -2,17 +2,29 @@
 
 GardenGuard is a plant disease detection project with a Colab-based training notebook and a Flutter app for inference.
 
+This demo is intended for Windows only; other platforms are not officially tested for the app workflow.
+
 ## Demo Video
 
-Click the image below to watch the demo:
+Click the image below to watch the demo!
 
-[![Garden Guard Demo](https://img.youtube.com/vi/i9WkSNy3jGY/hqdefault.jpg)](https://youtube.com/shorts/i9WkSNy3jGY)
+[![Garden Guard Demo](https://img.youtube.com/vi/42Z146qCd5c/maxresdefault.jpg)](https://www.youtube.com/shorts/42Z146qCd5c)
+
+
+## Quick Start
+
+1. Train the model in Google Colab using [training_files/GardenGuard_Training.ipynb](training_files/GardenGuard_Training.ipynb).
+2. Download `plant_model.onnx` from Colab and place it in [garden_guard_app/assets/models/plant_model.onnx](garden_guard_app/assets/models/plant_model.onnx) if you want to use your own model.
+3. Install Flutter using the [official setup guide](https://docs.flutter.dev/get-started/install).
+4. Open [garden_guard_app](garden_guard_app) and run `flutter pub get`.
+5. Launch the app with `flutter run`.
 
 ## Repository Structure
 
 ```text
 .
 ├── training_files/
+│   ├── field_test_images.zip        # Manually collected field validation data
 │   └── GardenGuard_Training.ipynb   # Model training & ONNX export pipeline
 ├── garden_guard_app/                # Flutter Project Root
 │   ├── assets/
@@ -20,16 +32,17 @@ Click the image below to watch the demo:
 │   │       └── plant_model.onnx     # Deployed production model
 │   ├── lib/                         # Application source code
 │   └── pubspec.yaml                 # Asset & dependency declarations
-├── field_test_images.zip            # Manually collected field validation data
 └── README.md
 ```
 
-## Code Structure
+## Code Structure and Files of Interest
 
-- [training_files/GardenGaurd_Training.ipynb](training_files/GardenGaurd_Training.ipynb) contains the training workflow, including dataset download, preprocessing, model training, and model packaging.
-- [garden_gaurd_app](garden_gaurd_app) contains the Flutter application that loads the ONNX model and performs predictions.
-- [garden_gaurd_app/assets/models/plant_model.onnx](garden_gaurd_app/assets/models/plant_model.onnx) is the model bundled with the app.
-- [garden_gaurd_app/pubspec.yaml](garden_gaurd_app/pubspec.yaml) declares the Flutter dependencies and registers the model asset.
+- [training_files/field_test_images.zip](training_files/field_test_images.zip) contains sample field images for manual testing.
+- [training_files/GardenGuard_Training.ipynb](training_files/GardenGuard_Training.ipynb) contains the training workflow, including dataset download, preprocessing, model training, and ONNX export.
+- [garden_guard_app](garden_guard_app) contains the Flutter application that loads the ONNX model and performs predictions.
+- [garden_guard_app/assets/models/plant_model.onnx](garden_guard_app/assets/models/plant_model.onnx) is the model bundled with the app.
+- [garden_guard_app/lib/main.dart](garden_guard_app/lib/main.dart) contains the app entry point and main source code.
+- [garden_guard_app/pubspec.yaml](garden_guard_app/pubspec.yaml) declares the Flutter dependencies and registers the model asset.
 
 
 ## Dependencies
@@ -43,11 +56,12 @@ The notebook expects these Python packages and services:
 - `torchvision`
 - `tqdm`
 - `google.colab`
+- `onnx`
 - Kaggle API credentials for dataset access
 
 ### Flutter App
 
-The Flutter app uses the following packages from [garden_gaurd_app/pubspec.yaml](garden_gaurd_app/pubspec.yaml):
+The Flutter app uses the following packages from [garden_guard_app/pubspec.yaml](garden_guard_app/pubspec.yaml):
 
 - `flutter`
 - `cupertino_icons`
@@ -57,9 +71,9 @@ The Flutter app uses the following packages from [garden_gaurd_app/pubspec.yaml]
 
 ## Run In Google Colab
 
-Use Google Colab to run the training notebook instead of a local Python environment.
+Use Google Colab to run the training notebook.
 
-1. Open [training_files/GardenGaurd_Training.ipynb](training_files/GardenGaurd_Training.ipynb) in Google Colab.
+1. Open [training_files/GardenGuard_Training.ipynb](training_files/GardenGuard_Training.ipynb) in Google Colab.
 2. If needed, upload the notebook to Google Drive first, then open it from Colab.
 3. In Colab, choose `Runtime` > `Change runtime type`.
 4. Set `Hardware accelerator` to `GPU` and select `T4 GPU` if it is available.
@@ -72,20 +86,23 @@ Use Google Colab to run the training notebook instead of a local Python environm
 - Downloads the PlantVillage dataset from Kaggle.
 - Unzips the dataset into the working directory.
 - Trains a MobileNetV2-based classifier.
-- Packages the trained model into `model_package.zip`.
-- Mounts Google Drive so outputs can be saved from the Colab session.
+- Exports the trained model to `plant_model.onnx`.
+- Downloads the ONNX file directly to your computer from Colab.
 
 ### Data and model access
 
 - The PlantVillage dataset is downloaded automatically by the notebook from Kaggle.
-- The app model is already bundled in the repository at [garden_gaurd_app/assets/models/plant_model.onnx](garden_gaurd_app/assets/models/plant_model.onnx), so no extra model download is needed to run the app.
-- If you want to use your own model trained in Colab, copy the new ONNX model into [garden_gaurd_app/assets/models/plant_model.onnx](garden_gaurd_app/assets/models/plant_model.onnx) before running the Flutter app.
+- After the Google Colab workflow exports and downloads `plant_model.onnx` to your computer, you can use your own trained model in the app!
+- If you want to keep the included model, use the existing file at [garden_guard_app/assets/models/plant_model.onnx](garden_guard_app/assets/models/plant_model.onnx).
+- If you want to use your own model, replace [garden_guard_app/assets/models/plant_model.onnx](garden_guard_app/assets/models/plant_model.onnx) with the ONNX file downloaded from Colab.
+- Keep the filename exactly `plant_model.onnx` so the app can load it correctly.
+- Once your model file is in place, the next step is installing Flutter.
 
 ## Install Flutter
 
-Install Flutter before running the app in [garden_gaurd_app](garden_gaurd_app).
+Install Flutter before running the app in [garden_guard_app](garden_guard_app).
 
-1. Download the Flutter SDK from https://docs.flutter.dev/get-started/install.
+1. Download the Flutter SDK from [the official Flutter installation guide](https://docs.flutter.dev/get-started/install).
 2. Follow the instructions for your operating system (Windows, macOS, or Linux).
 3. Add the Flutter `bin` folder to your system `PATH`.
 4. Open a new terminal and verify installation:
@@ -111,12 +128,25 @@ flutter doctor
 
 ## Run The Flutter App
 
-If you want to test the mobile or desktop app after training, use the Flutter project in [garden_gaurd_app](garden_gaurd_app).
+If you want to test the app after training, use the Flutter project in [garden_guard_app](garden_guard_app).
+For this demo, use Windows or Android emulator (Android devices set to "Developer Mode" also work with plug-in); Linux is not officially supported for the app workflow.
 
-1. Open a terminal in [garden_gaurd_app](garden_gaurd_app).
+1. Open a terminal in [garden_guard_app](garden_guard_app).
 2. Run `flutter pub get`.
 3. Check available devices with `flutter devices`.
-4. Launch the app with `flutter run`.
+4. Launch the app with `flutter run -d <device-id>`.
+
+
+## Run Field Tests
+If you want to test the app after training, use the Flutter project in [garden_guard_app](garden_guard_app).  
+For this demo, use Windows or an Android emulator. Physical Android devices also work when connected via USB with Developer Mode and USB debugging enabled. Linux is not officially supported for the app workflow.
+
+1. Extract [training_files/field_test_images.zip](training_files/field_test_images.zip) into a folder on your computer.
+2. Start the app with `flutter run` and wait for it to open on your selected device.
+3. In the app, tap or click `Choose Leaf Photo`.
+4. Select one of the extracted field test images.
+5. Compare the app prediction with the image filename or the expected plant disease label.
+6. Repeat the test with several images to see how the model performs across different real-world samples!
 
 ## Provenance
 
@@ -130,4 +160,4 @@ No prior code was used for this project.
 
 - If Kaggle download fails in Colab, verify the Kaggle username and key values entered in the notebook.
 - If Colab runs out of memory, restart the runtime and try again with the T4 GPU runtime selected.
-- If the Flutter app cannot find the model, confirm [garden_gaurd_app/assets/models/plant_model.onnx](garden_gaurd_app/assets/models/plant_model.onnx) exists and is listed in [garden_gaurd_app/pubspec.yaml](garden_gaurd_app/pubspec.yaml).
+- If the Flutter app cannot find the model, confirm [garden_guard_app/assets/models/plant_model.onnx](garden_guard_app/assets/models/plant_model.onnx) exists and is listed in [garden_guard_app/pubspec.yaml](garden_guard_app/pubspec.yaml).
