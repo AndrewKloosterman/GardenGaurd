@@ -2,6 +2,8 @@
 
 GardenGuard is a plant disease detection project with a Colab-based training notebook and a Flutter app for inference.
 
+If you do not want to retrain your own model, skip ahead "Install Flutter" to use author's model.
+
 ## Demo Video
 
 Click the image below to watch the demo!
@@ -68,6 +70,8 @@ The Flutter app uses the following packages from [garden_guard_app/pubspec.yaml]
 - `onnxruntime`
 
 ## Run In Google Colab
+
+If you do not want to retrain your own model, skip ahead "Install Flutter" to use author's model.
 
 Use Google Colab to run the training notebook.
 
